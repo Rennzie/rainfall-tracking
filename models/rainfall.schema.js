@@ -12,20 +12,19 @@ class Rainfall extends Model {
     return 'rainfall';
   }
 
-  static get relationMappings() {
-    return {
-      farm_id: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: Farm,
-        join: {
-          from: 'rainfall.farm_id',
-          to: 'farms.id'
-        }
-      }
-    };
-  }
+  // static get relationMappings() {
+  //   return {
+  //     farms: {
+  //       relation: Model.BelongsToOneRelation,
+  //       modelClass: Farm,
+  //       join: {
+  //         from: 'rainfall.farm_id',
+  //         to: 'farms.id'
+  //       }
+  //     }
+  //   };
+  // }
 }
 
 module.exports = Rainfall;
-
-// NEXT: get farm with joined rainfall data.
+// NEXT: hook this up to a graphQL apollo server and serve data

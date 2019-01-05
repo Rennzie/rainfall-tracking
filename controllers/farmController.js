@@ -12,12 +12,13 @@ function farmsIndex(req, res, next) {
 //     .eager('rainfall');
 
 //   res.json(farms);
+//   next();
 // };
 
 function farmShow(req, res, next) {
   Farm.query()
     .findById(req.params.id)
-    // .eager('rainfall')
+    .eager('rainfall')
     .then(farm => res.json(farm))
     .catch(next);
 }

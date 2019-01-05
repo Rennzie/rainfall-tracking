@@ -14,7 +14,7 @@ class Farm extends Model {
 
   static get relationMappings() {
     return {
-      farm_id: {
+      rainfall: {
         relation: Model.HasManyRelation,
         modelClass: Rainfall,
         join: {
