@@ -19,8 +19,10 @@
     "test": "nyc mocha --require @babel/register test/**/*_spec.js --require test/spec_helper --recursive --exit"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "knex": "^0.16.3",
+    "objection": "^1.4.0",
     "pg": "^7.7.1"
   },
   "devDependencies": {
