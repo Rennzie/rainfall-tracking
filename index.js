@@ -1,20 +1,17 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const router = require('./config/router');
+import { ApolloServer } from 'apollo-server';
 
-const app = express();
+import Farm from './models/farm.schema';
+import Rainfall from './models/rainfall.schema';
+import typeDefs from './graphql/types';
+import resolvers from './graphql/resolvers';
 
-const port = 3000;
+// In the most basic sense, the ApolloServer can be started
+// by passing type definitions (typeDefs) and the resolvers
+// responsible for fetching the data for those types.
+const server = new ApolloServer({ typeDefs, resolvers, context: { Farm, Rainfall } });
 
-app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true
-  })
-);
-
-app.use('/api', router);
-
-app.listen(port, () => {
-  console.log(`App running on port ${port}.`);
+// This `listen` method launches a web-server.  Existing apps
+// can utilize middleware options, which we'll discuss later.
+server.listen().then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`);
 });

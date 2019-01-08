@@ -1,13 +1,13 @@
-const Knex = require('knex');
-const { Model } = require('objection');
-const connection = require('../knexfile');
+import Knex from 'knex';
+import { Model } from 'objection';
+import connection from '../knexfile';
 
-const Rainfall = require('./rainfall.schema');
+import Rainfall from './rainfall.schema';
 
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
 
-class Farm extends Model {
+export default class Farm extends Model {
   static get tableName() {
     return 'farms';
   }
@@ -25,5 +25,3 @@ class Farm extends Model {
     };
   }
 }
-
-module.exports = Farm;

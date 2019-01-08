@@ -1,8 +1,8 @@
-const Knex = require('knex');
-const { Model } = require('objection');
-const connection = require('../knexfile');
+import Knex from 'knex';
+import { Model } from 'objection';
+import connection from '../knexfile';
 
-const Farm = require('./farm.schema');
+// import Farm from './farm.schema';
 
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
@@ -26,5 +26,4 @@ class Rainfall extends Model {
   // }
 }
 
-module.exports = Rainfall;
-// NEXT: hook this up to a graphQL apollo server and serve data
+export default Rainfall;
