@@ -15,6 +15,10 @@ const linkSchema = gql`
     count: Int
   }
 
+  type Message {
+    message: String
+  }
+
   #scalar Url
   #scalar Date
 `;

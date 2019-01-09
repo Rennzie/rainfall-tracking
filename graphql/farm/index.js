@@ -8,7 +8,9 @@ const typeDefs = gql`
   }
 
   extend type Mutation {
-    createFarm(name: String): Farm
+    createFarm(name: String, farm_owner: String): Farm
+    updateFarm(id: ID!, name: String, farm_owner: String): Farm
+    deleteFarm(id: Int!): Message
   }
 
   # This "Farm" is a parent type which has a oneToMany relation with Rainfall.
@@ -39,7 +41,31 @@ const resolvers = {
 
   Mutation: {
     createFarm: async (parent, args, { Farm }) => {
-      await Farm.query().insertGraph(args);
+      const farm = await Farm.query()
+        .allowInsert('[name, farm_owner]')
+        .insert(args);
+
+      return farm;
+    },
+
+    updateFarm: async (parent, args, { Farm }) => {
+      await Farm.query()
+        .findById(args.id)
+        .patch(args);
+      const farm = await Farm.query().findById(args.id);
+      return farm;
+    },
+
+    deleteFarm: async (parent, args, { Farm, Rainfall }) => {
+      const deleteFarmRainfallRows = await Rainfall.query()
+        .delete()
+        .where('farm_id', '=', args.id);
+
+      const deleteFarmRows = await Farm.query().deleteById(args.id);
+
+      return {
+        message: `Successfully deleted ${deleteFarmRows} farm and ${deleteFarmRainfallRows} rainfall entries`
+      };
     }
   }
 };
