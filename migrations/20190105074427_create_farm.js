@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
       table.increments('id').primary();
       table.string('name');
       table.string('farm_owner'); // this should reference a user
+      table.timestamps(true, true);
     })
   ]);
 };

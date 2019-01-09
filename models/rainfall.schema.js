@@ -12,6 +12,14 @@ class Rainfall extends Model {
     return 'rainfall';
   }
 
+  $beforeInsert() {
+    this.created_at = new Date().toISOString();
+  }
+
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
+  }
+
   // static get relationMappings() {
   //   return {
   //     farms: {

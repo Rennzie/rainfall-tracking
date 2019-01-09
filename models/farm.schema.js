@@ -12,6 +12,14 @@ export default class Farm extends Model {
     return 'farms';
   }
 
+  $beforeInsert() {
+    this.created_at = new Date().toISOString();
+  }
+
+  $beforeUpdate() {
+    this.updated_at = new Date().toISOString();
+  }
+
   static get relationMappings() {
     return {
       rainfall: {

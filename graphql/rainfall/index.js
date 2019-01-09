@@ -66,3 +66,5 @@ const resolvers = {
 };
 
 export default { typeDefs, resolvers };
+
+// NEXT: write a virtual which calculates the months average rainfall

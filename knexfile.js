@@ -1,6 +1,6 @@
 // Update with your config settings.
 
-export default {
+module.exports = {
   client: 'pg',
   connection: process.env.DATABASE_URL || { user: 'me', database: 'stockmanapi' }
 
