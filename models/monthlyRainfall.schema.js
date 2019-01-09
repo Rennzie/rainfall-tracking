@@ -7,19 +7,10 @@ import connection from '../knexfile';
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
 
-class Rainfall extends Model {
+class MonthlyRainfall extends Model {
   static get tableName() {
-    return 'rainfall';
+    return 'monthly_rainfall';
   }
-
-  async $afterInsert() {
-    // find all the rainfall results for the farm for the current month
-    // sum them and add them to the MonthlyRainfall
-    // Be sure to update if its not the first time in the month
-    const monthsRainfall = this.query().where('farm_id', '=', 1);
-  }
-
-  // NEXT: trying to sum the months rainfall for a farm
 
   $beforeInsert() {
     this.created_at = new Date().toISOString();
@@ -43,4 +34,4 @@ class Rainfall extends Model {
   // }
 }
 
-export default Rainfall;
+export default MonthlyRainfall;

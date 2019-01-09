@@ -19,6 +19,7 @@ const typeDefs = gql`
     name: String
     farm_owner: String
     rainfall: [Rainfall]
+    currentMonthsAverage: Int
   }
 `;
 
