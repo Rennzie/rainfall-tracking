@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
       table.increments('id').primary();
       table.float('rain');
       table.enu('unit', ['mm', 'inch']);
+      table.date('date');
       table.string('year');
       table.string('month');
       table.integer('farm_id').references('farms.id');

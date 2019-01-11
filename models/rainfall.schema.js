@@ -2,7 +2,7 @@ import Knex from 'knex';
 import { Model } from 'objection';
 import connection from '../knexfile';
 
-// import Farm from './farm.schema';
+import Farm from './farm.schema';
 
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
@@ -16,7 +16,12 @@ class Rainfall extends Model {
     // find all the rainfall results for the farm for the current month
     // sum them and add them to the MonthlyRainfall
     // Be sure to update if its not the first time in the month
-    const monthsRainfall = this.query().where('farm_id', '=', 1);
+    console.log('$AFTER INSERT THIS ===> ', this);
+    const monthsRainfall = await Rainfall.query()
+      .where('farm_id', '=', this.farm_id)
+      .andWhereRaw('EXTRACT(YEAR FROM date::date) = 2019')
+      .andWhereRaw('EXTRACT(MONTH FROM date::date) = 1');
+    console.log('THIS FARMS MONTHS RAINFALL =======> ', monthsRainfall);
   }
 
   // NEXT: trying to sum the months rainfall for a farm
