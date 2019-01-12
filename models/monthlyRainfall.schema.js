@@ -7,10 +7,8 @@ import connection from '../knexfile';
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
 
-class MonthlyRainfall extends Model {
-  static get tableName() {
-    return 'monthly_rainfall';
-  }
+export default class MonthlyRainfall extends Model {
+  static tableName = 'monthly_rainfall';
 
   $beforeInsert() {
     this.created_at = new Date().toISOString();
@@ -20,18 +18,14 @@ class MonthlyRainfall extends Model {
     this.updated_at = new Date().toISOString();
   }
 
-  // static get relationMappings() {
-  //   return {
-  //     farms: {
-  //       relation: Model.BelongsToOneRelation,
-  //       modelClass: Farm,
-  //       join: {
-  //         from: 'rainfall.farm_id',
-  //         to: 'farms.id'
-  //       }
+  // static relationMappings = {
+  //   monthlyRainfall: {
+  //     relation: Model.HasOneRelation,
+  //     modelClass: `${__dirname}/farm.schema`,
+  //     join: {
+  //       from: 'monthly)rainfall.farm_id',
+  //       to: 'farms.id'
   //     }
-  //   };
-  // }
+  //   }
+  // };
 }
-
-export default MonthlyRainfall;

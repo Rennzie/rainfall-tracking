@@ -19,7 +19,7 @@ const typeDefs = gql`
     name: String
     farm_owner: String
     rainfall: [Rainfall]
-    currentMonthsAverage: Int
+    twelveMonthRunningRainfall: Float
   }
 `;
 
@@ -34,7 +34,8 @@ const resolvers = {
     Farm: async (parent, { id }, { Farm }) => {
       const farm = await Farm.query()
         .findById(id)
-        .eager('rainfall');
+        .eager('rainfall')
+        .eager('monthlyRainfall');
 
       return farm;
     }

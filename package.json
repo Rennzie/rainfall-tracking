@@ -25,6 +25,7 @@
     "graphql": "^14.0.2",
     "knex": "^0.16.3",
     "lodash": "^4.17.11",
+    "moment": "^2.23.0",
     "objection": "^1.4.0",
     "pg": "^7.7.1"
   },
@@ -32,6 +33,7 @@
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-proposal-throw-expressions": "^7.0.0",

@@ -8,14 +8,15 @@ const typeDefs = gql`
 
   extend type Mutation {
     createRainfallRelated(farm_id: Int!, rain: Int, date: String): Rainfall
-    createRainfall(farm_id: Int!, rain: Int, date: String): Rainfall
-    updateRainfall(id: Int!, rain: Int, date: String): Message
+    createRainfall(farm_id: Int!, rain: Int, unit: String, date: String): Rainfall
+    updateRainfall(id: Int!, farm_id: Int!, rain: Int, unit: String, date: String): Message
     deleteRainfall(id: Int!): Message
   }
 
   type Rainfall {
     id: Int
     rain: Int
+    unit: String
     farm_id: Int
     date: String
   }

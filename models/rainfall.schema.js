@@ -1,51 +1,91 @@
 import Knex from 'knex';
 import { Model } from 'objection';
+import moment from 'moment';
 import connection from '../knexfile';
 
-import Farm from './farm.schema';
+import MonthlyRainfall from './monthlyRainfall.schema';
 
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
 
-class Rainfall extends Model {
-  static get tableName() {
-    return 'rainfall';
+export default class Rainfall extends Model {
+  static tableName = 'rainfall';
+
+  $beforeInsert() {
+    this.created_at = new Date().toISOString();
   }
 
+  // To update the farms monthly rainfall total
   async $afterInsert() {
     // find all the rainfall results for the farm for the current month
     // sum them and add them to the MonthlyRainfall
     // Be sure to update if its not the first time in the month
-    console.log('$AFTER INSERT THIS ===> ', this);
+
+    const year = moment(this.date).year();
+    // Postgres months are not zero indexed like moment
+    const month = moment(this.date).month() + 1;
+
     const monthsRainfall = await Rainfall.query()
       .where('farm_id', '=', this.farm_id)
-      .andWhereRaw('EXTRACT(YEAR FROM date::date) = 2019')
-      .andWhereRaw('EXTRACT(MONTH FROM date::date) = 1');
-    console.log('THIS FARMS MONTHS RAINFALL =======> ', monthsRainfall);
-  }
+      .andWhereRaw(`EXTRACT(YEAR FROM date::date) = ${year}`)
+      .andWhereRaw(`EXTRACT(MONTH FROM date::date) = ${month}`);
 
-  // NEXT: trying to sum the months rainfall for a farm
+    let monthsTotalRainfall = 0;
+    for (let i = 0; i < monthsRainfall.length; i += 1) {
+      monthsTotalRainfall += monthsRainfall[i].rain;
+    }
 
-  $beforeInsert() {
-    this.created_at = new Date().toISOString();
+    const monthlyRainfall = await MonthlyRainfall.query()
+      .where('farm_id', '=', this.farm_id)
+      .andWhereRaw(`EXTRACT(YEAR FROM date::date) = ${year}`)
+      .andWhereRaw(`EXTRACT(MONTH FROM date::date) = ${month}`);
+
+    if (!monthlyRainfall.length) {
+      // building a new monthly total object
+      const newMonthlyRainfall = {};
+      newMonthlyRainfall.date = this.date;
+      newMonthlyRainfall.farm_id = this.farm_id;
+      newMonthlyRainfall.rain = monthsTotalRainfall;
+      newMonthlyRainfall.month = moment(this.date).format('MMM');
+      newMonthlyRainfall.unit = 'mm';
+      newMonthlyRainfall.year = moment(this.date).format('YYYY');
+      await MonthlyRainfall.query()
+        .allowInsert('[date, farm_id, month, rain, unit, year]')
+        .insert(newMonthlyRainfall);
+    } else {
+      await MonthlyRainfall.query()
+        .findById(monthlyRainfall[0].id)
+        .patch({ rain: monthsTotalRainfall });
+    }
   }
 
   $beforeUpdate() {
     this.updated_at = new Date().toISOString();
   }
 
-  // static get relationMappings() {
-  //   return {
-  //     farms: {
-  //       relation: Model.BelongsToOneRelation,
-  //       modelClass: Farm,
-  //       join: {
-  //         from: 'rainfall.farm_id',
-  //         to: 'farms.id'
-  //       }
-  //     }
-  //   };
-  // }
-}
+  // Update the monthly total after record is updated
+  async $afterUpdate() {
+    const year = moment(this.date).year();
+    // Postgres months are not zero indexed like moment
+    const month = moment(this.date).month() + 1;
 
-export default Rainfall;
+    const monthsRainfall = await Rainfall.query()
+      .where('farm_id', '=', this.farm_id)
+      .andWhereRaw(`EXTRACT(YEAR FROM date::date) = ${year}`)
+      .andWhereRaw(`EXTRACT(MONTH FROM date::date) = ${month}`);
+
+    let monthsTotalRainfall = 0;
+    for (let i = 0; i < monthsRainfall.length; i += 1) {
+      monthsTotalRainfall += monthsRainfall[i].rain;
+    }
+
+    const monthlyRainfall = await MonthlyRainfall.query()
+      .where('farm_id', '=', this.farm_id)
+      .andWhereRaw(`EXTRACT(YEAR FROM date::date) = ${year}`)
+      .andWhereRaw(`EXTRACT(MONTH FROM date::date) = ${month}`);
+
+    await MonthlyRainfall.query()
+      .findById(monthlyRainfall[0].id)
+      .patch({ rain: monthsTotalRainfall });
+  }
+}

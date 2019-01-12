@@ -2,30 +2,26 @@ import Knex from 'knex';
 import { Model } from 'objection';
 import connection from '../knexfile';
 
-import Rainfall from './rainfall.schema';
-import MonthlyRainfall from './monthlyRainfall.schema';
-
 const knexConnection = Knex(connection);
 Model.knex(knexConnection);
 
 export default class Farm extends Model {
-  static get tableName() {
-    return 'farms';
-  }
+  static tableName = 'farms';
 
-  static get virtualAttributes() {
-    return ['currentMonthsAverage'];
-  }
+  static virtualAttributes = ['twelveMonthRunningRainfall'];
 
-  currentMonthsAverage() {
-    let totalRain = 0;
-    console.log('THIS IS ', this.rainfall);
-    for (let i = 0; i < this.rainfall.length; i += 1) {
-      totalRain += this.rainfall[i].rain;
-    }
-    const averageRain = totalRain / this.rainfall.length;
-    console.log('AVERAGE RAIN:', averageRain);
-    return averageRain;
+  twelveMonthRunningRainfall() {
+    // get all monthly rainfall for this farm for the last 12 months
+    // sum there rainfall and return it
+    const prev12Months = this.monthlyRainfall;
+    // .query()
+    // .whereRaw('EXTRACT(YEAR FROM date::date) = 2018');
+    console.log('THIS IS ', prev12Months);
+
+    // let totalRain = 0;
+    // for (let i = 0; i < this.rainfall.length; i += 1) {
+    //   totalRain += this.rainfall[i].rain;
+    // }
   }
 
   $beforeInsert() {
@@ -36,22 +32,22 @@ export default class Farm extends Model {
     this.updated_at = new Date().toISOString();
   }
 
-  static get relationMappings() {
-    return {
-      rainfall: {
-        relation: Model.HasManyRelation,
-        modelClass: Rainfall,
-        join: {
-          from: 'farms.id',
-          to: 'rainfall.farm_id'
-        },
-        totalMonthlyRainfall: {
-          relation: Model.HasManyRelation,
-          modelClass: MonthlyRainfall,
-          join: 'farms.id',
-          to: 'rainfall.farm_id'
-        }
+  static relationMappings = {
+    monthlyRainfall: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/monthlyRainfall.schema`,
+      join: {
+        from: 'farms.id',
+        to: 'monthly_rainfall.farm_id'
       }
-    };
-  }
+    },
+    rainfall: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/rainfall.schema`,
+      join: {
+        from: 'farms.id',
+        to: 'rainfall.farm_id'
+      }
+    }
+  };
 }
