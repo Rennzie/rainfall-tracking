@@ -1,5 +1,6 @@
 import Knex from 'knex';
 import { Model } from 'objection';
+import moment from 'moment';
 import connection from '../knexfile';
 
 const knexConnection = Knex(connection);
@@ -11,17 +12,20 @@ export default class Farm extends Model {
   static virtualAttributes = ['twelveMonthRunningRainfall'];
 
   twelveMonthRunningRainfall() {
-    // get all monthly rainfall for this farm for the last 12 months
-    // sum there rainfall and return it
-    const prev12Months = this.monthlyRainfall;
-    // .query()
-    // .whereRaw('EXTRACT(YEAR FROM date::date) = 2018');
-    console.log('THIS IS ', prev12Months);
+    const today = moment();
+    const twelveMonthsAgo = moment().subtract(12, 'months');
+    const prev12Months = this.monthlyRainfall.filter(monthsRainfall =>
+      moment(monthsRainfall.date).isBetween(twelveMonthsAgo, today, 'month', '[)')
+    );
+    // console.log('========>', prev12Months);
 
-    // let totalRain = 0;
-    // for (let i = 0; i < this.rainfall.length; i += 1) {
-    //   totalRain += this.rainfall[i].rain;
-    // }
+    let totalRain = 0;
+    for (let i = 0; i < prev12Months.length; i += 1) {
+      totalRain += prev12Months[i].rain;
+      // console.log('FOR LOOP========>', totalRain);
+    }
+
+    return totalRain;
   }
 
   $beforeInsert() {

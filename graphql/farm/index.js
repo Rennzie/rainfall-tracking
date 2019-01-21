@@ -34,8 +34,8 @@ const resolvers = {
     Farm: async (parent, { id }, { Farm }) => {
       const farm = await Farm.query()
         .findById(id)
-        .eager('rainfall')
-        .eager('monthlyRainfall');
+        .eager('[rainfall]');
+      // .eager('monthlyRainfall');
 
       return farm;
     }
