@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import orderBy from 'lodash/orderBy';
 import NewEditForm from './NewEditForm';
+import DeleteComponent from '../common/DeleteMutation';
 
 const GET_FARM_RAINFALL = gql`
   query FarmRainfallQuery($farmId: Int!) {
@@ -40,6 +41,13 @@ const EDIT_RAINFALL = gql`
     }
   }
 `;
+const DELETE_RAINFALL = gql`
+  mutation EditRainfall($id: Int!) {
+    rainfall: deleteRainfall(id: $id) {
+      message
+    }
+  }
+`;
 
 export default function Rainfall() {
   const [values, setValues] = useState({
@@ -53,6 +61,7 @@ export default function Rainfall() {
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
+
   return (
     <Fragment>
       {!editRainfall && (
@@ -139,6 +148,7 @@ export default function Rainfall() {
                 >
                   edit
                 </Icon>
+                <DeleteComponent id={id} query={DELETE_RAINFALL} />
               </Paper>
             )
           );

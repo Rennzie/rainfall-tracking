@@ -1,6 +1,9 @@
 import { gql } from 'apollo-server';
 import Farm from './farm/index';
-import Rainfall from './rainfall/index';
+import DailyRainfall from './dailyRainfall/index';
+import MonthlyRainfall from './monthlyRainfall/index';
+import TwelveMonthRunningRainfall from './twelveMonthRunningRainfall/index';
+import RainGuage from './rainGuage/index';
 
 const linkSchema = gql`
   type Query {
@@ -23,4 +26,11 @@ const linkSchema = gql`
   #scalar Date
 `;
 
-export default [linkSchema, Farm.typeDefs, Rainfall.typeDefs];
+export default [
+  linkSchema,
+  Farm.typeDefs,
+  RainGuage.typeDefs,
+  DailyRainfall.typeDefs,
+  MonthlyRainfall.typeDefs,
+  TwelveMonthRunningRainfall.typeDefs
+];
