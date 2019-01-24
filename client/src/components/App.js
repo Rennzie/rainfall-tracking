@@ -2,7 +2,7 @@ import React, { lazy, Suspense, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import withStyles from '@material-ui/core/styles/withStyles';
-import BottomNav from './components/BottomNav';
+import BottomNav from './BottomNav';
 
 const styles = () => ({
   appBackground: {
@@ -14,7 +14,7 @@ const styles = () => ({
   }
 });
 
-const Pages = lazy(() => import('./components/Pages'));
+const Pages = lazy(() => import('./Pages'));
 
 function App({ classes }) {
   return (

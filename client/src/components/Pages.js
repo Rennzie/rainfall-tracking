@@ -6,6 +6,7 @@ import Route from 'react-router-dom/Route';
 // COMPONENTS
 import withStyles from '@material-ui/core/styles/withStyles';
 import Rainfall from './Rainfall';
+import RainfallNew from './Rainfall/New';
 import Dashboard from './Dashboard/index';
 
 const styles = theme => ({
@@ -22,7 +23,8 @@ function Pages({ classes }) {
     <main className={classes.bodyContainer}>
       <Switch>
         <Route exact path="/" component={Dashboard} />
-        <Route path="/rainfall" component={Rainfall} />
+        <Route exact path="/rainfall" component={Rainfall} />
+        <Route exact path="/rainfall/new" component={RainfallNew} />
       </Switch>
     </main>
   );
