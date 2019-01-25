@@ -1,31 +1,18 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Mutation } from 'react-apollo';
-import { gql } from 'apollo-boost';
 import withStyles from '@material-ui/core/styles/withStyles';
 import uuidv4 from 'uuid/v4';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import moment from 'moment';
-
-const NEW_RAINFALL = gql`
-  mutation createRainfallMutation($id: ID!, $guageId: ID!, $rainfall: Int!, $date: String!) {
-    newRainfall: createRainfall(
-      id: $id
-      guage_id: $guageId
-      rainfall: $rainfall
-      date: $date
-      unit: "mm"
-    ) {
-      id
-      guage_id
-      rainfall
-      date
-      unit
-    }
-  }
-`;
+import {
+  NEW_RAINFALL,
+  GET_DAILY_RAINFALL,
+  GET_MONTHLY_RAINFALL,
+  GET_TMRR_RAINFALL
+} from './queries';
 
 const styles = theme => ({
   margin: { margin: theme.spacing.unit },
@@ -42,29 +29,38 @@ function RainfallNew({ classes, history }) {
     setValues({ [name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    setValues({
-      date: moment().format('YYYY-MM-DD'),
-      rainfall: 0
-    });
-    history.push('/rainfall');
-  };
+  /**
+   * The queries with hard coded rainguage variable
+   * to be refetched after adding a new rainfall record
+   */
+  const refetchQueries = [
+    /**
+     * THIS IS NOT THE BEST METHOD IN MY OPINION
+     * WILL REFETCH ALL THE RAINFALL QUERIES AFTER EACH MUTATION WHICH ADDS NEW RAINFALL
+     *
+     */
+    {
+      query: GET_TMRR_RAINFALL,
+      variables: { guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }
+    },
+    {
+      query: GET_MONTHLY_RAINFALL,
+      variables: { guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }
+    },
+    {
+      query: GET_DAILY_RAINFALL,
+      variables: { guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }
+    }
+  ];
 
   return (
     <Fragment>
       <Mutation
+        awaitRefetchQueries
         mutation={NEW_RAINFALL}
-        // update={(cache, { data: { rainfall } }) => {
-        //   const { farm } = cache.readQuery({
-        //     query: GET_FARM_RAINFALL,
-        //     variables: { farmId: 1 }
-        //   });
-        //   farm.rainfall.push(rainfall);
-        //   cache.writeQuery({
-        //     query: GET_FARM_RAINFALL,
-        //     data: { farm }
-        //   });
-        // }}
+        ignoreResults
+        refetchQueries={() => refetchQueries}
+        onCompleted={() => history.push('/rainfall')}
       >
         {(handleNewRainfall, { loading, error }) => (
           <section className={classes.column}>
@@ -100,7 +96,6 @@ function RainfallNew({ classes, history }) {
                     rainfall: parseInt(values.rainfall, 10)
                   }
                 });
-                handleSubmit();
               }}
               variant="contained"
             >
