@@ -14,7 +14,7 @@ function RainfallLineChart({ rainfall }) {
   const data = [];
 
   rainfall.forEach(rainfallObj => {
-    data.push({ t: moment(rainfallObj.date), y: rainfallObj.rainfall });
+    data.push({ t: moment(parseInt(rainfallObj.date, 10)), y: rainfallObj.rainfall });
     // labels.push(moment(rainfallObj.date).format('MMM YY'));
     // data.push(rainfallObj.rainfall);
   });

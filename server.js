@@ -1,13 +1,13 @@
 import { ApolloServer } from 'apollo-server';
 
-import Farm from './models/farm.schema';
-import RainGuage from './models/rainGuage.schema';
-import DailyRainfall from './models/dailyRainfall.schema';
-import MonthlyRainfall from './models/monthlyRainfall.schema';
-import TwelveMonthRunningRainfall from './models/twelveMonthRunningRainfall.schema';
+import Farm from './src/models/farm.schema';
+import RainGuage from './src/models/rainGuage.schema';
+import DailyRainfall from './src/models/dailyRainfall.schema';
+import MonthlyRainfall from './src/models/monthlyRainfall.schema';
+import TwelveMonthRunningRainfall from './src/models/twelveMonthRunningRainfall.schema';
 
-import typeDefs from './graphql/types';
-import resolvers from './graphql/resolvers';
+import typeDefs from './src/graphql/types';
+import resolvers from './src/graphql/resolvers';
 
 // In the most basic sense, the ApolloServer can be started
 // by passing type definitions (typeDefs) and the resolvers

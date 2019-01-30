@@ -19,7 +19,7 @@ exports.up = knex =>
       table.uuid('id').primary();
       table.float('rainfall');
       table.enu('unit', ['mm', 'inch']);
-      table.string('date');
+      table.date('date');
       table.uuid('guage_id');
       //   .references('rain_guages.id')
       //   .onDelete('SET NULL');
@@ -29,7 +29,7 @@ exports.up = knex =>
       table.uuid('id').primary();
       table.float('rainfall');
       table.enu('unit', ['mm', 'inch']);
-      table.string('date');
+      table.date('date');
       table.integer('year');
       table.integer('month');
       table.uuid('guage_id');
@@ -41,7 +41,7 @@ exports.up = knex =>
       table.uuid('id').primary();
       table.float('rainfall');
       table.enu('unit', ['mm', 'inch']);
-      table.string('date');
+      table.date('date');
       table.integer('year');
       table.integer('month');
       table.uuid('guage_id');

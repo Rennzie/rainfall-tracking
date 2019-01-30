@@ -1,4 +1,4 @@
-const { farmIds } = require('../seedData/uuids');
+const { farmIds } = require('../../seedData/uuids');
 
 exports.seed = knex =>
   // Deletes ALL existing entries

@@ -1,5 +1,5 @@
-const { dailyRainfallIds, rainGuageIds } = require('../seedData/uuids');
 const uuid = require('uuid/v4');
+const { dailyRainfallIds, rainGuageIds } = require('../../seedData/uuids');
 
 exports.seed = knex =>
   // Deletes ALL existing entries

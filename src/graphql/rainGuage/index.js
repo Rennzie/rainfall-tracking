@@ -7,7 +7,7 @@ const typeDefs = gql`
   type RainGuage {
     id: ID!
     farm_id: ID
-    dailyRainfall: [DailyRainfall]
+    dailyRainfall(limit: Int): [DailyRainfall]
     monthlyRainfall: [MonthlyRainfall]
     twelveMonthRunningRainfall: [TwelveMonthRunningRainfall]
   }
@@ -21,8 +21,16 @@ const resolvers = {
     }
   },
   RainGuage: {
-    dailyRainfall: async ({ id }, __, { DailyRainfall }) => {
-      const dailyRainfall = await DailyRainfall.query().where('guage_id', '=', id);
+    // Dates are returned as a string which are unix timestamps
+    dailyRainfall: async ({ id }, { limit }, { DailyRainfall }) => {
+      const dailyRainfall = await DailyRainfall.query()
+        .where('guage_id', '=', id)
+        .orderBy('date', 'desc')
+        .limit(limit);
+
+      const cursor = dailyRainfall.pop().date;
+      console.log(cursor);
+
       return dailyRainfall;
     },
 

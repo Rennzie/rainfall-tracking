@@ -21,6 +21,7 @@ export const NEW_RAINFALL = gql`
 export const GET_MONTHLY_RAINFALL = gql`
   query GetRainfallQuery($guageId: ID!) {
     rainfall: RainGuage(id: $guageId) {
+      id
       farm_id
       monthlyRainfall {
         id
@@ -32,9 +33,11 @@ export const GET_MONTHLY_RAINFALL = gql`
     }
   }
 `;
+
 export const GET_TMRR_RAINFALL = gql`
   query GetRainfallQuery($guageId: ID!) {
     rainfall: RainGuage(id: $guageId) {
+      id
       farm_id
       twelveMonthRunningRainfall {
         id
@@ -46,11 +49,28 @@ export const GET_TMRR_RAINFALL = gql`
     }
   }
 `;
+
 export const GET_DAILY_RAINFALL = gql`
-  query GetRainfallQuery($guageId: ID!) {
+  query GetRainfallQuery($guageId: ID!, $limit: Int) {
     rainfall: RainGuage(id: $guageId) {
+      id
       farm_id
-      dailyRainfall {
+      dailyRainfall(limit: $limit) {
+        id
+        guage_id
+        rainfall
+        unit
+        date
+      }
+    }
+  }
+`;
+
+export const GET_MORE_DAILY_RAINFALL = gql`
+  query GetMoreRainfallQuery($guageId: ID!, $limit: Int!, $cursor: String!) {
+    moreRainfall: MoreDailyRainfall(limit: $limit, cursor: $cursor, guageId: $guageId) {
+      cursor
+      rainfall {
         id
         guage_id
         rainfall

@@ -1,9 +1,11 @@
 import { gql } from 'apollo-server';
+import moment from 'moment';
 
 const typeDefs = gql`
   # Comments in GraphQL are defined with the hash (#) symbol.
   extend type Query {
     Rainfalls: [DailyRainfall]
+    MoreDailyRainfall(limit: Int!, cursor: String!, guageId: ID!): MoreDailyRainfall
   }
 
   extend type Mutation {
@@ -14,8 +16,12 @@ const typeDefs = gql`
       date: String!
       unit: String!
     ): DailyRainfall
-    updateRainfall(id: ID!, guage_id: ID!, rainfall: Int, unit: String, date: String): Message
+    updateRainfall(id: ID!, guageId: ID!, rainfall: Int, unit: String, date: String): Message
     deleteRainfall(id: ID!): Message
+  }
+  type MoreDailyRainfall {
+    cursor: String
+    rainfall: [DailyRainfall]
   }
 
   type DailyRainfall {
@@ -30,9 +36,26 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     Rainfalls: async (parent, args, { DailyRainfall }) => {
-      const rainfalls = await DailyRainfall.query();
+      const rainfalls = await DailyRainfall.query().orderBy('date', 'desc');
 
       return rainfalls;
+    },
+    MoreDailyRainfall: async (parent, { limit, cursor, guageId }, { DailyRainfall }) => {
+      const moreRainfalls = await DailyRainfall.query()
+        .where('guage_id', '=', guageId)
+        .andWhere('date', '<', moment(parseInt(cursor, 10)).format('YYYY-MM-DD'))
+        .orderBy('date', 'desc')
+        .limit(limit);
+
+      let newCursor;
+
+      if (moreRainfalls.length) {
+        newCursor = moreRainfalls[limit - 1].date;
+      }
+
+      const moreDailyRainfall = { cursor: newCursor, rainfall: moreRainfalls };
+
+      return moreDailyRainfall;
     }
   },
   Mutation: {

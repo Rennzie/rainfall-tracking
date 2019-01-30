@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'react-router-dom/Link';
 import { Query } from 'react-apollo';
@@ -11,20 +11,30 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import orderBy from 'lodash/orderBy';
 import AddIcon from '@material-ui/icons/Add';
-// import DeleteComponent from '../common/DeleteMutation';
+// import moment from 'moment';
 import RainfallLineChart from './LineChart';
+// import RainfallCards from './Card';
+import GuageContext from '../contexts/GuageContext';
 
-import { GET_DAILY_RAINFALL, GET_MONTHLY_RAINFALL, GET_TMRR_RAINFALL } from './queries';
+import {
+  GET_DAILY_RAINFALL,
+  GET_MONTHLY_RAINFALL,
+  GET_TMRR_RAINFALL
+  // GET_MORE_DAILY_RAINFALL
+} from './queries';
 
 const styles = theme => ({
   fab: {
-    position: 'fixed',
-    bottom: '40px',
-    left: '43%',
-
-    zIndex: 100,
-
     margin: theme.spacing.unit
+  },
+  logButtonContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'fixed',
+    bottom: '56px',
+    zIndex: 100,
+    width: '100%'
   },
   extendedIcon: {
     marginRight: theme.spacing.unit
@@ -44,8 +54,8 @@ const styles = theme => ({
  */
 
 function Rainfall({ classes }) {
-  const [radioValue, setRadioValue] = useState('monthlyRainfall');
-  const [query, setQuery] = useState(GET_MONTHLY_RAINFALL);
+  const [radioValue, setRadioValue] = useState('dailyRainfall');
+  const [query, setQuery] = useState(GET_DAILY_RAINFALL);
   const handleChange = e => {
     setRadioValue(e.target.value);
     switch (e.target.value) {
@@ -60,20 +70,26 @@ function Rainfall({ classes }) {
     }
   };
 
+  const GuageCtx = useContext(GuageContext);
+  console.log('======> ', GuageCtx);
+
   return (
     <Fragment>
-      <Query query={query} variables={{ guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }}>
+      <Query query={query} variables={{ guageId: GuageCtx.id, limit: 10 }}>
         {({ loading, error, data }) => {
           if (loading) return <p>Loading ...</p>;
           if (error) return <p>Error {console.error('ERROR====>', error)}</p>;
-          console.log('======> ', data);
+          console.log('Returned from DB ======> ', data.rainfall[radioValue]);
+          // const orderedRainfall = data.rainfall[radioValue];
           const orderedRainfall = orderBy(data.rainfall[radioValue], rainfall => rainfall.date, [
             'asc'
           ]);
+          console.log('Lodash ordered, ======> ', orderedRainfall);
 
           return <RainfallLineChart rainfall={orderedRainfall} />;
         }}
       </Query>
+
       <FormControl component="fieldset" className={classes.formControl}>
         <FormLabel component="legend">Time Period</FormLabel>
         <RadioGroup
@@ -87,15 +103,63 @@ function Rainfall({ classes }) {
           <FormControlLabel value="dailyRainfall" control={<Radio />} label="Daily" />
         </RadioGroup>
       </FormControl>
-      <Fab
-        aria-label="Add"
-        color="primary"
-        className={classes.fab}
-        component={Link}
-        to="/rainfall/new"
+
+      {/* <Query
+        query={GET_DAILY_RAINFALL}
+        variables={{ guageId: '491c4b10-eacb-4590-a162-00d25daf889c', limit: 5 }}
       >
-        <AddIcon />
-      </Fab>
+        {({ data: { rainfall }, error, fetchMore, loading }) => {
+          if (loading) return <p>Loading ...</p>;
+          if (error) return <p>Error {console.error('ERROR====>', error)}</p>;
+
+          console.log('Returned from DB ======> ', rainfall.dailyRainfall);
+          // const orderedRainfall = rainfall.dailyRainfall;
+          const newCursor = rainfall.dailyRainfall.pop().date;
+
+          return (
+            <RainfallCards
+              rainfallEntries={rainfall.dailyRainfall || []}
+              onLoadMore={() =>
+                fetchMore({
+                  query: GET_MORE_DAILY_RAINFALL,
+                  variables: {
+                    cursor: newCursor,
+                    limit: 5,
+                    guageId: '491c4b10-eacb-4590-a162-00d25daf889c'
+                  },
+                  updateQuery: (previousResult, { fetchMoreResult }) => {
+                    const previousRainfall = previousResult.rainfall.dailyRainfall;
+                    console.log('PREVIOUS RAINFALL', previousRainfall);
+
+                    const newRainfall = fetchMoreResult.moreRainfall.rainfall;
+                    console.log('NEW RAINFALL', newRainfall);
+
+                    const nextCursor = fetchMoreResult.moreRainfall.cursor;
+                    console.log('Next Cursor', nextCursor);
+
+                    return {
+                      cursor: nextCursor,
+                      rainfallEntries: { dailyRainfall: [...newRainfall, ...previousRainfall] },
+                      __typename: previousRainfall.__typename
+                    };
+                  }
+                })
+              }
+            />
+          );
+        }}
+      </Query> */}
+      <div className={classes.logButtonContainer}>
+        <Fab
+          aria-label="Add"
+          color="primary"
+          className={classes.fab}
+          component={Link}
+          to="/rainfall/new"
+        >
+          <AddIcon />
+        </Fab>
+      </div>
     </Fragment>
   );
 }
@@ -105,57 +169,3 @@ Rainfall.propTypes = {
 };
 
 export default withStyles(styles)(Rainfall);
-
-// {
-//   editRainfall && (
-//     <Fragment>
-//       <Typography>Edit Rainfall {editingId}</Typography>
-//       {/** THIS MIGRATION DOES NOT UPDATE THE UI REACTIVELY!! */}
-//       <Mutation mutation={EDIT_RAINFALL}>
-//         {(handleEditRainfall, { loading, error }) => (
-//           <Fragment>
-//             <NewEditForm
-//               editingId={editingId}
-//               handleMutation={handleEditRainfall}
-//               handleChange={handleChange}
-//               values={values}
-//               setValues={setValues}
-//             />
-
-//             {loading && <p>Loading...</p>}
-//             {error && <p>Error :/ Please try again</p>}
-//           </Fragment>
-//         )}
-//       </Mutation>
-//     </Fragment>
-//   );
-// }
-
-// return orderBy(data.RainGuage.monthlyRainfall, rainfall => rainfall.date, ['desc']).map(
-//   ({ id, rainfall, date }) => (
-//     <Paper key={id}>
-//       <p>
-//         Amount:
-//         {rainfall} mm
-//       </p>
-//       <p>
-//         Date:
-//         {date}
-//       </p>
-//       {/* <Icon
-//                   onClick={() => {
-//                     setEditingId(id);
-//                     setEditRainfall(true);
-//                     setValues({
-//                       date,
-//                       rainfall
-//                     });
-//                   }}
-//                   fontSize="small"
-//                 >
-//                   edit
-//                 </Icon> */}
-//       {/* <DeleteComponent id={id} query={DELETE_RAINFALL} /> */}
-//     </Paper>
-//   )
-// );

@@ -2,7 +2,7 @@ import Knex from 'knex';
 import { Model } from 'objection';
 import moment from 'moment';
 import uuidv4 from 'uuid/v4';
-import connection from '../knexfile';
+import connection from '../../knexfile';
 
 import MonthlyRainfall from './monthlyRainfall.schema';
 
@@ -10,7 +10,7 @@ const guid = require('objection-guid')();
 
 // const guid = ObjectionGuid();
 
-const knexConnection = Knex(connection);
+const knexConnection = Knex(connection[process.env.NODE_ENV]);
 Model.knex(knexConnection);
 
 export default class DailyRainfall extends guid(Model) {

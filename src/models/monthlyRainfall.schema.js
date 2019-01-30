@@ -3,12 +3,12 @@ import { Model } from 'objection';
 import ObjectionGuid from 'objection-guid';
 import moment from 'moment';
 import uuidv4 from 'uuid/v4';
-import connection from '../knexfile';
+import connection from '../../knexfile';
 import TwelveMonthRunningRainfall from './twelveMonthRunningRainfall.schema';
 
 const guid = ObjectionGuid();
 
-const knexConnection = Knex(connection);
+const knexConnection = Knex(connection[process.env.NODE_ENV]);
 Model.knex(knexConnection);
 
 export default class MonthlyRainfall extends guid(Model) {

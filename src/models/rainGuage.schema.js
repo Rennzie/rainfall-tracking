@@ -1,9 +1,9 @@
 import Knex from 'knex';
 import ObjectionGuid from 'objection-guid';
 import { Model } from 'objection';
-import connection from '../knexfile';
+import connection from '../../knexfile';
 
-const knexConnection = Knex(connection);
+const knexConnection = Knex(connection[process.env.NODE_ENV]);
 Model.knex(knexConnection);
 
 const guid = ObjectionGuid();

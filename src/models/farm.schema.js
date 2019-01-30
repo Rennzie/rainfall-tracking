@@ -1,11 +1,11 @@
 import Knex from 'knex';
 import { Model } from 'objection';
 import ObjectionGuid from 'objection-guid';
-import connection from '../knexfile';
+import connection from '../../knexfile';
 
 const guid = ObjectionGuid();
 
-const knexConnection = Knex(connection);
+const knexConnection = Knex(connection[process.env.NODE_ENV]);
 Model.knex(knexConnection);
 
 export default class Farm extends guid(Model) {

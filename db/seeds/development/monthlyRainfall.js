@@ -1,4 +1,4 @@
-const { rainGuageIds, monthlyRainfallIds } = require('../seedData/uuids');
+const { rainGuageIds, monthlyRainfallIds } = require('../../seedData/uuids');
 
 exports.seed = knex =>
   // Deletes ALL existing entries
@@ -114,7 +114,7 @@ exports.seed = knex =>
           year: 2018,
           month: 1,
           guage_id: rainGuageIds[0]
-        },
+        }
         // {
         //   id: monthlyRainfallIds[12],
         //   rainfall: 180,
