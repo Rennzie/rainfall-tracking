@@ -23,7 +23,7 @@ const linkSchema = gql`
   }
 
   #scalar Url
-  #scalar Date
+  scalar Date
 `;
 
 export default [

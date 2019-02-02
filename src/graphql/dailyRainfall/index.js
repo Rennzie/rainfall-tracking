@@ -6,6 +6,7 @@ const typeDefs = gql`
   extend type Query {
     Rainfalls: [DailyRainfall]
     MoreDailyRainfall(limit: Int!, cursor: String!, guageId: ID!): MoreDailyRainfall
+    MonthRainfallPage(year: Int!, month: Int!, guageId: ID!): [DailyRainfall]
   }
 
   extend type Mutation {
@@ -13,10 +14,10 @@ const typeDefs = gql`
       id: ID!
       guage_id: ID!
       rainfall: Int!
-      date: String!
+      date: Date!
       unit: String!
     ): DailyRainfall
-    updateRainfall(id: ID!, guageId: ID!, rainfall: Int, unit: String, date: String): Message
+    updateRainfall(id: ID!, guageId: ID!, rainfall: Int, unit: String, date: Date): Message
     deleteRainfall(id: ID!): Message
   }
   type MoreDailyRainfall {
@@ -29,7 +30,7 @@ const typeDefs = gql`
     rainfall: Int
     unit: String
     guage_id: ID
-    date: String
+    date: Date
   }
 `;
 
@@ -56,6 +57,17 @@ const resolvers = {
       const moreDailyRainfall = { cursor: newCursor, rainfall: moreRainfalls };
 
       return moreDailyRainfall;
+    },
+
+    MonthRainfallPage: async (parent, { year, month, guageId }, { DailyRainfall }) => {
+      const monthRainfallPage = await DailyRainfall.query()
+        .where('guage_id', '=', guageId)
+        .andWhereRaw('EXTRACT(YEAR FROM date::date) = ?', [year])
+        // Postgres months start at one, moment at 0. Incoming month value is moment derived
+        .andWhereRaw('EXTRACT(MONTH FROM date::date) = ?', [month + 1])
+        .orderBy('date', 'desc');
+
+      return monthRainfallPage;
     }
   },
   Mutation: {

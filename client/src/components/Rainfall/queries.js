@@ -66,6 +66,18 @@ export const GET_DAILY_RAINFALL = gql`
   }
 `;
 
+export const GET_MONTHS_RAINFALL_RECORDS = gql`
+  query GetMonthsRainfallQuery($year: Int!, $month: Int!, $guageId: ID!) {
+    monthRainfall: MonthRainfallPage(year: $year, month: $month, guageId: $guageId) {
+      id
+      guage_id
+      rainfall
+      unit
+      date
+    }
+  }
+`;
+
 export const GET_MORE_DAILY_RAINFALL = gql`
   query GetMoreRainfallQuery($guageId: ID!, $limit: Int!, $cursor: String!) {
     moreRainfall: MoreDailyRainfall(limit: $limit, cursor: $cursor, guageId: $guageId) {

@@ -7,7 +7,7 @@ const typeDefs = gql`
   type RainGuage {
     id: ID!
     farm_id: ID
-    dailyRainfall(limit: Int): [DailyRainfall]
+    dailyRainfall(limit: Int = null): [DailyRainfall]
     monthlyRainfall: [MonthlyRainfall]
     twelveMonthRunningRainfall: [TwelveMonthRunningRainfall]
   }

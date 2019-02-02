@@ -11,7 +11,8 @@ import {
   NEW_RAINFALL,
   GET_DAILY_RAINFALL,
   GET_MONTHLY_RAINFALL,
-  GET_TMRR_RAINFALL
+  GET_TMRR_RAINFALL,
+  GET_MONTHS_RAINFALL_RECORDS
 } from './queries';
 
 const styles = theme => ({
@@ -26,7 +27,7 @@ function RainfallNew({ classes, history }) {
   });
 
   const handleChange = name => e => {
-    setValues({ [name]: e.target.value });
+    setValues({ ...values, [name]: e.target.value });
   };
 
   /**
@@ -38,6 +39,7 @@ function RainfallNew({ classes, history }) {
      * THIS IS NOT THE BEST METHOD IN MY OPINION
      * WILL REFETCH ALL THE RAINFALL QUERIES AFTER EACH MUTATION WHICH ADDS NEW RAINFALL
      *
+     * THIS IS A BIT COMPLEX, NEED TO REFETCH ALL QUERIES IN THE CACHE
      */
     {
       query: GET_TMRR_RAINFALL,
@@ -50,6 +52,10 @@ function RainfallNew({ classes, history }) {
     {
       query: GET_DAILY_RAINFALL,
       variables: { guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }
+    },
+    {
+      query: GET_MONTHS_RAINFALL_RECORDS,
+      variables: { guageId: '491c4b10-eacb-4590-a162-00d25daf889c' }
     }
   ];
 
@@ -59,7 +65,7 @@ function RainfallNew({ classes, history }) {
         awaitRefetchQueries
         mutation={NEW_RAINFALL}
         ignoreResults
-        refetchQueries={() => refetchQueries}
+        // refetchQueries={() => refetchQueries}
         onCompleted={() => history.push('/rainfall')}
       >
         {(handleNewRainfall, { loading, error }) => (
@@ -88,6 +94,7 @@ function RainfallNew({ classes, history }) {
               className={classes.margin}
               color="primary"
               onClick={() => {
+                console.log('the rainfall value is', values.rainfall);
                 handleNewRainfall({
                   variables: {
                     date: moment(values.date).format('YYYY-MM-DD'),

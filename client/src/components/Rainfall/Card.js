@@ -1,14 +1,21 @@
 import React, { Fragment } from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, withStyles } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import moment from 'moment';
 
-export default function RainfallCards({ rainfallEntries, onLoadMore }) {
+const styles = theme => ({
+  margin: {
+    margin: theme.spacing.unit,
+    padding: theme.spacing.unit
+  }
+});
+
+function RainfallCards({ classes, rainfallEntries, onLoadMore }) {
   return (
     <Fragment>
       {rainfallEntries.map(rain => (
-        <Paper key={rain.id}>
-          date: {moment(parseInt(rain.date, 10)).format('DD MMM YYYY')}
+        <Paper key={rain.id} className={classes.margin}>
+          date: {moment(rain.date).format('DD MMM YYYY')}
           rain: {rain.rainfall} mm
         </Paper>
       ))}
@@ -16,3 +23,5 @@ export default function RainfallCards({ rainfallEntries, onLoadMore }) {
     </Fragment>
   );
 }
+
+export default withStyles(styles)(RainfallCards);
