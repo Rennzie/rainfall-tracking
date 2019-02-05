@@ -7,6 +7,7 @@ const typeDefs = gql`
     Rainfalls: [DailyRainfall]
     MoreDailyRainfall(limit: Int!, cursor: String!, guageId: ID!): MoreDailyRainfall
     MonthRainfallPage(year: Int!, month: Int!, guageId: ID!): [DailyRainfall]
+    RainfallPerGuage(guageId: ID!): [DailyRainfall]
   }
 
   extend type Mutation {
@@ -40,6 +41,11 @@ const resolvers = {
       const rainfalls = await DailyRainfall.query().orderBy('date', 'desc');
 
       return rainfalls;
+    },
+    RainfallPerGuage: async (parent, { guageId }, { rainfallFuncs }) => {
+      const rainfall = await rainfallFuncs.getRainfallPerRainGuage(guageId);
+
+      return rainfall;
     },
     MoreDailyRainfall: async (parent, { limit, cursor, guageId }, { DailyRainfall }) => {
       const moreRainfalls = await DailyRainfall.query()

@@ -1,4 +1,5 @@
 module.exports = {
+  userIds: ['e9e8778a-c655-47fc-91f4-764b40a16299'],
   dailyRainfallIds: [
     '4a8f6f25-e8b3-41ce-bb00-a9afe0f5b6e6',
     '2050696e-84bf-4112-abd1-7c04d76e9381',

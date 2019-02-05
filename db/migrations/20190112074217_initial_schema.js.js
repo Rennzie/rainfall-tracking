@@ -1,5 +1,11 @@
 exports.up = knex =>
   knex.schema
+    .createTable('users', table => {
+      table.uuid('id').primary();
+      table.string('email'); // this should reference a user
+      table.string('password'); // this should reference a user
+      table.timestamps(true, true);
+    })
     .createTable('farms', table => {
       table.uuid('id').primary();
       table.string('name');
@@ -52,6 +58,7 @@ exports.up = knex =>
 
 exports.down = knex =>
   knex.schema
+    .dropTableIfExists('users')
     .dropTableIfExists('daily_rainfall')
     .dropTableIfExists('twelve_month_running_rainfall')
     .dropTableIfExists('monthly_rainfall')

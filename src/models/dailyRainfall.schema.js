@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import Knex from 'knex';
 import { Model } from 'objection';
 import moment from 'moment';
@@ -13,7 +14,8 @@ const guid = require('objection-guid')();
 const knexConnection = Knex(connection[process.env.NODE_ENV]);
 Model.knex(knexConnection);
 
-export default class DailyRainfall extends guid(Model) {
+/** DEFINE THE DATA MODEL HERE AS AN OBJECTION MODEL */
+export class DailyRainfall extends guid(Model) {
   static tableName = 'daily_rainfall';
 
   $beforeInsert() {
@@ -71,7 +73,6 @@ export default class DailyRainfall extends guid(Model) {
     this.updated_at = new Date().toISOString();
   }
 
-  // Update the monthly total after record is updated
   async $afterUpdate() {
     const updatedEntry = await DailyRainfall.query().findById(this.id);
 
@@ -105,3 +106,23 @@ export default class DailyRainfall extends guid(Model) {
       });
   }
 }
+
+/**
+ *  BUSINESS FETCHING TRANSFORMING LOGIC WRITTEN HERE IN THE MODEL
+ *  Objection takes care of the connecting to the correct pg knex
+ *  connection and providing the data model for us
+ */
+
+const getRainfallPerRainGuage = async guageId => {
+  const dailyRainfall = await DailyRainfall.query()
+    .where('guage_id', '=', guageId)
+    .orderBy('date', 'desc');
+
+  return dailyRainfall;
+};
+
+/** EXPORT THE MODELS FUNCTIONS AS ONE OBJECT */
+
+export const rainfallFuncs = {
+  getRainfallPerRainGuage
+};

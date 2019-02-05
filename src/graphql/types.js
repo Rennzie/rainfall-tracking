@@ -4,6 +4,7 @@ import DailyRainfall from './dailyRainfall/index';
 import MonthlyRainfall from './monthlyRainfall/index';
 import TwelveMonthRunningRainfall from './twelveMonthRunningRainfall/index';
 import RainGuage from './rainGuage/index';
+import User from './user/schema';
 
 const linkSchema = gql`
   type Query {
@@ -28,6 +29,7 @@ const linkSchema = gql`
 
 export default [
   linkSchema,
+  User.typeDefs,
   Farm.typeDefs,
   RainGuage.typeDefs,
   DailyRainfall.typeDefs,
